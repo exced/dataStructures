@@ -44,7 +44,7 @@ class CardStack : public datastructure::Stack<card::Card>
     */
     inline void fullfillRandom()
     {
-        while (this->push(card::Card()))
+        while (push(card::Card()))
         {
         }
     }

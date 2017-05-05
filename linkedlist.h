@@ -71,12 +71,20 @@ class LinkedList
     {
         Node *node = new Node();
         node->element_ = element;
-        if (size_++ == 0) // first element
+        if (size_ == 0)
         {
             head_ = node;
-            tail_ = node;
+            size_++;
             return;
         }
+        if (size_ == 1)
+        {
+            tail_ = node;
+            head_->next_ = tail_;
+            size_++;
+            return;
+        }
+        size_++;
         tail_->next_ = node;
         return;
     }
@@ -93,11 +101,8 @@ class LinkedList
         Node *head = head_;
         const T &element = head_->element_;
         size_--;
-        if (head_ != tail_) // has next
-        {
-            head_ = head_->next_;
-            delete head;
-        }
+        head_ = head_->next_;
+        delete head;
         return element;
     }
 
@@ -115,6 +120,17 @@ class LinkedList
     inline uint32_t size() const
     {
         return size_;
+    }
+
+    friend std::ostream &operator<<(std::ostream &os, const LinkedList &queue)
+    {
+        Node *curr = queue.head_;
+        while (curr)
+        {
+            os << curr->element_ << ", ";
+            curr = curr->next_;
+        }
+        return os;
     }
 };
 }

@@ -40,11 +40,11 @@ class Queue
   public:
     Queue(uint32_t capacity)
     {
-        elements_ = new T[capacity];
-        size_ = 0;
         capacity_ = capacity;
+        size_ = 0;
         head_ = 0;
         tail_ = -1;
+        elements_ = new T[capacity];
     };
 
     ~Queue()
