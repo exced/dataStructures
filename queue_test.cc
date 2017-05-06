@@ -24,5 +24,9 @@ int main(int argc, const char *argv[])
     std::cout << "size: " << queue.size() << std::endl;
     std::cout << queue.remove() << std::endl;
     std::cout << queue.remove() << std::endl;
+    queue.add(1);
+    queue.add(2);
+    queue.add(3);
+    std::cout << queue << std::endl;
     return 0;
 }

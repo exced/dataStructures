@@ -127,6 +127,15 @@ class Queue
     {
         return size_;
     }
+
+    friend std::ostream &operator<<(std::ostream &os, const Queue &queue)
+    {
+        for (int i = 0; i < queue.size(); i++)
+        {
+            os << queue.elements_[queue.head_ + i] << ", ";
+        }
+        return os;
+    }
 };
 }
 
