@@ -1,4 +1,4 @@
-//  Simple Queue implementation using array.
+//  Simple Queue implementation using array. Warning: Limited size.
 //
 //  queue.h
 //  datastructure

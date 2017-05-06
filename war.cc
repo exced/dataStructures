@@ -1,7 +1,7 @@
 //  Simple war card game using our stack implementation.
 //
 //  war.cc
-//  datastructure
+//  card
 //
 //  Created by Thomas BARRAS on 17-05-04.
 //  Copyright © 2017 Exced. All rights reserved.

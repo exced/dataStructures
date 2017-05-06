@@ -11,6 +11,7 @@
 #define CARTON_H__
 
 #include "random.h"
+#include "linkedlist.h"
 
 namespace factory
 {
@@ -44,8 +45,8 @@ std::ostream &operator<<(std::ostream &os, Piece piece)
 
 struct Carton
 {
-    Piece pieces_[PIECE_NUMBER];          // fullfilled pieces array
-    uint32_t pieces_number_; // number of pieces_
+    datastructure::LinkedList<Piece> pieces_; // fullfilled pieces array
+    uint32_t pieces_number_;             // number of pieces_
     uint32_t id_;
 };
 
@@ -56,26 +57,22 @@ Carton randomCarton(uint32_t id)
 {
     Carton carton = Carton();
     // init pieces
-    Piece pieces[PIECE_NUMBER];
+    datastructure::LinkedList<Piece> pieces;
+    Piece piece;
     for (int i = 0; i < PIECE_NUMBER; i++)
     {
-        pieces[i] = Piece();
-        pieces[i].id_ = rand() % PIECE_NUMBER;
-        pieces[i].carton_id_ = id;
+        piece = Piece();
+        piece.id_ = rand() % PIECE_NUMBER;
+        piece.carton_id_ = id;
+        pieces.add(piece);
     }
-    *carton.pieces_ = *pieces;
     carton.id_ = id;
     return carton;
 }
 
 std::ostream &operator<<(std::ostream &os, Carton carton)
 {
-    os << "id: " << carton.id_ << ", pieces: [ ";
-    for (int i = 0; i < PIECE_NUMBER; i++)
-    {
-        os << carton.pieces_[i] << ",";
-    }
-    os << " ]" << std::endl;
+    os << "id: " << carton.id_ << ", pieces: [ " << carton.pieces_ << " ]" << std::endl;
     return os;
 }
 }
