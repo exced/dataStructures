@@ -1,7 +1,7 @@
 //  Simple Color enum
 //
 //  color.h
-//  datastructure
+//  color
 //
 //  Created by Thomas BARRAS on 17-05-04.
 //  Copyright © 2017 Exced. All rights reserved.
@@ -9,10 +9,6 @@
 
 #ifndef COLOR_H__
 #define COLOR_H__
-
-#include <stdbool.h>
-#include <stdint.h>
-#include <exception>
 
 namespace color
 {

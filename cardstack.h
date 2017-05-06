@@ -1,7 +1,7 @@
 //  Simple Stack Card class for war card game.
 //
 //  cardstack.h
-//  datastructure
+//  card
 //
 //  Created by Thomas BARRAS on 17-05-04.
 //  Copyright © 2017 Exced. All rights reserved.
@@ -12,6 +12,7 @@
 
 #include "stack.h"
 #include "card.h"
+#include "random.h"
 
 namespace card
 {
@@ -28,15 +29,7 @@ class CardStack : public datastructure::Stack<card::Card>
     */
     inline void shuffle()
     {
-        int r;
-        card::Card card;
-        for (int i = 0; i < size_; i++)
-        {
-            r = rand() % (i + 1);
-            card = elements_[r];
-            elements_[r] = elements_[i];
-            elements_[i] = card;
-        }
+        random::shuffle(elements_, size_);
     }
 
     /**

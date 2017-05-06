@@ -1,6 +1,6 @@
 //
 //  color_test.cc
-//  datastructure
+//  color
 //
 //  Created by Thomas BARRAS on 17-05-04.
 //  Copyright © 2017 Exced. All rights reserved.

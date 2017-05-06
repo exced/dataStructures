@@ -1,7 +1,7 @@
 //  Simple Card class for war card game.
 //
 //  card.h
-//  datastructure
+//  card
 //
 //  Created by Thomas BARRAS on 17-05-04.
 //  Copyright © 2017 Exced. All rights reserved.
