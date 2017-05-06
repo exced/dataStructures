@@ -20,6 +20,10 @@ int main(int argc, const char *argv[])
     const int player_capacity = 50;
     const int max_capacity = player_capacity * 2;
     const int game_number = 3;
+
+    // random seed
+    srand(time(NULL));
+
     // distribution stack
     card::CardStack distribution_stack = card::CardStack(max_capacity);
     distribution_stack.fullfillRandom();

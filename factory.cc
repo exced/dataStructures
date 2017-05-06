@@ -13,34 +13,66 @@
 
 #include <iostream>
 
-#include "queue.h"
-#include "carton.h"
+#include "linkedlist.h"
+
+struct Piece
+{
+    uint8_t id_;          // piece identifier: {0: head, 1: skirt, 2: axe}
+    uint32_t time_track_; // time tracking since the beginning of the chain
+};
 
 /**
-* worker empties a queue in another -> chain of tasks. Returns the time taken.
+* simulate a breakdown: add 5 to 10 minutes to repair, tenth precision
 */
-float worker(datastructure::LinkedList<factory::Piece> &job, datastructure::LinkedList<factory::Piece> &next, float working_time)
+float time_breakdown()
 {
-    float time_taken = 0.f;
-    
+    return !(rand() % 4) ? static_cast<float>(50 + (rand() % 50)) / (10.f) : 0.f;
+}
+
+/**
+* simulate a chained task job with a breakdown. Take 1 piece, enhances it and give it to the next worker.
+*/
+void work(datastructure::LinkedList<Piece> &job, datastructure::LinkedList<Piece> &next, int quantity, int id_new, float time_taken)
+{
+    for (int i = 0; i < quantity; i++)
+    {
+        job.remove();
+    }
+    Piece piece = Piece();
+    piece.id_ = id_new;                                 // piece transformation
+    piece.time_track_ += time_taken + time_breakdown(); // timestamp tag
+    next.add(piece);
 }
 
 int main(int argc, const char *argv[])
 {
-    const int capacity = 100; // number of input cartons.
+    const int capacity = 10;    // number of input cartons.
+    const int pieces_number = 4; // number of different pieces. (head/skirt/axe/piston)
 
-    factory::Carton carton = factory::randomCarton();          // init input cartons : initially randomed. -> head/skirt/axe
-    datastructure::LinkedList<factory::Piece> head_queue;      // head -> assembler
-    datastructure::LinkedList<factory::Piece> skirt_queue;     // skirt -> assembler
-    datastructure::LinkedList<factory::Piece> axe_queue;       // axe -> assembler
-    datastructure::LinkedList<factory::Piece> assembler_queue; // head/skirt/axe -> assembled.
-    datastructure::LinkedList<factory::Piece> assembled_queue; // assembled -> done.
+    // random seed
+    srand(time(NULL));
 
-    // load balancer
-    factory::Piece piece;
-    while (!carton.pieces_.empty())
+    datastructure::LinkedList<Piece> carton;          // -> head/skirt/axe
+    datastructure::LinkedList<Piece> head_queue;      // head -> assembler
+    datastructure::LinkedList<Piece> skirt_queue;     // skirt -> assembler
+    datastructure::LinkedList<Piece> axe_queue;       // axe -> assembler
+    datastructure::LinkedList<Piece> assembler_queue; // head/skirt/axe -> piston.
+    datastructure::LinkedList<Piece> piston_queue;    // piston stack
+
+    // init input cartons : initially randomed pieces.
+    Piece piece;
+    for (int i = 0; i < capacity; i++)
     {
-        piece = carton.pieces_.remove();
+        piece = Piece();
+        piece.id_ = rand() % (pieces_number - 1);
+        piece.time_track_ = 0;
+        carton.add(piece);
+    }
+
+    // load balancer : we do not know the content of a carton
+    while (!carton.empty())
+    {
+        piece = carton.remove();
         switch (piece.id_)
         {
         case 0: // head
@@ -57,7 +89,28 @@ int main(int argc, const char *argv[])
         }
     }
 
+    float time_head = 0.f;
+    float time_skirt = 0.f;
+    float time_axe = 0.f;
+    float time_assembler = 0.f;
     // scheduling simulation
+    while (!head_queue.empty() && !skirt_queue.empty() && !axe_queue.empty())
+    {
+        // workflow simulation
+        time_head += 2.f;
+        work(head_queue, assembler_queue, 1, 0, time_head);
+        time_skirt += 3.f;
+        work(skirt_queue, assembler_queue, 1, 1, time_skirt);
+        time_axe += 2.5f;
+        work(axe_queue, assembler_queue, 1, 2, time_axe);
+        float times[] = {time_head, time_skirt, time_axe};
+        // assembler
+        time_assembler += 1.f + *std::max_element(times, times + pieces_number - 1);
+        work(assembler_queue, piston_queue, 3, 4, time_assembler);
+    }
+
+    // output of simulation
+    std::cout << piston_queue.size() << " piston(s) assembled in " << piston_queue.elementLast().time_track_ << " minutes." << std::endl;
 
     return 0;
 }

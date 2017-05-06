@@ -1,6 +1,6 @@
 //
-//  carton_test.cc
-//  carton
+//  channel_test.cc
+//  channel
 //
 //  Created by Thomas BARRAS on 17-05-04.
 //  Copyright © 2017 Exced. All rights reserved.
@@ -12,10 +12,10 @@
 
 #include <iostream>
 
-#include "carton.h"
+#include "channel.h"
 
-int main(int argc, const char * argv[]) {
-    const factory::Carton c1 = factory::randomCarton();
-    std::cout << c1 << std::endl;
+int main(int argc, const char *argv[])
+{
+    
     return 0;
 }

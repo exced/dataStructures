@@ -26,6 +26,7 @@ int main(int argc, const char *argv[])
     queue.add(7);
     std::cout << "size: " << queue.size() << std::endl;
     std::cout << "queue: " << queue << std::endl;
+    std::cout << "last: " << queue.peekLast() << std::endl;
     std::cout << queue.remove() << std::endl;
     std::cout << "size: " << queue.size() << std::endl;
     std::cout << queue.remove() << std::endl;

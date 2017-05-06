@@ -53,6 +53,14 @@ class LinkedList
     }
 
     /**
+    * Retrieves, but does not remove, the tail of this queue, or returns null if this queue is empty.
+    */
+    inline const T &peekLast() const
+    {
+        return (size_ == 0) ? NULL : tail_->element_;
+    }
+
+    /**
     * Retrieves, but does not remove, the head of this queue. This method differs from peek only in that it throws an exception if this queue is empty.
     */
     inline const T &element() const
@@ -63,6 +71,18 @@ class LinkedList
         }
         return head_->element_;
     }
+
+    /**
+    * Retrieves, but does not remove, the tail of this queue. This method differs from peek only in that it throws an exception if this queue is empty.
+    */
+    inline const T &elementLast() const
+    {
+        if (size_ == 0)
+        {
+            throw queue_empty_exception;
+        }
+        return tail_->element_;
+    }    
 
     /**
     * Inserts the specified element at the end of this queue.
