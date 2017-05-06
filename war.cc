@@ -17,9 +17,9 @@
 
 int main(int argc, const char *argv[])
 {
-    const int player_capacity = 50;
-    const int max_capacity = player_capacity * 2;
-    const int game_number = 3;
+    const int player_capacity = 50;               // number of cards of each player
+    const int max_capacity = player_capacity * 2; // distribution stack
+    const int game_number = 3;                    // number of games played
 
     // random seed
     srand(time(NULL));

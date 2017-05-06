@@ -16,7 +16,8 @@ namespace random
 {
 
 /**
-* Shuffle given array and its size
+* Shuffle given array and its size.
+* Each of the array_size! permutations of the deck is equally likely. (Assuming our number generator is perfect).
 */
 template <typename T>
 void shuffle(T array[], int size)

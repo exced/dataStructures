@@ -5,4 +5,4 @@
 ### card
 Tools for card game
 ### factory
-Tools to simulate a creation chain of a factory.
+Tools to simulate a production chain of a factory.

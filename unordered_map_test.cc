@@ -1,5 +1,5 @@
 //
-//  trie_test.cc
+//  unordered_map_test.cc
 //  datastructure
 //
 //  Created by Thomas BARRAS on 17-05-04.
@@ -12,14 +12,14 @@
 
 #include <iostream>
 #include <string>
-
-#include "trie.h"
+#include <unordered_map>
 
 int main(int argc, const char *argv[])
 {
-    datastructure::LinkedList<std::string> words;
-    words.add("hello");
-    datastructure::Trie trie(words);
-    std::cout << trie.contains("h") << std::endl;
+    std::unordered_map <std::string, int> m;
+    m["foo"] = 42;
+    std::string t = "foo";
+    std::cout << m[t] << std::endl;
+    std::cout << m.at(t) << std::endl;
     return 0;
 }
