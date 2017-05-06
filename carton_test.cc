@@ -15,9 +15,7 @@
 #include "carton.h"
 
 int main(int argc, const char * argv[]) {
-    const factory::Carton c1 = factory::randomCarton(1);
-    const factory::Carton c2 = factory::randomCarton(2);
+    const factory::Carton c1 = factory::randomCarton();
     std::cout << c1 << std::endl;
-    std::cout << c2 << std::endl;
     return 0;
 }

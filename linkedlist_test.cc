@@ -20,6 +20,10 @@ int main(int argc, const char *argv[])
     queue.add(1);
     queue.add(2);
     queue.add(3);
+    queue.add(4);
+    queue.add(5);
+    queue.add(6);
+    queue.add(7);
     std::cout << "size: " << queue.size() << std::endl;
     std::cout << "queue: " << queue << std::endl;
     std::cout << queue.remove() << std::endl;

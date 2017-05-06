@@ -16,12 +16,11 @@
 namespace factory
 {
 
-const uint8_t PIECE_NUMBER = 3;
+const uint8_t PIECES_NUMBER = 100;
 
 struct Piece
 {
     uint8_t id_;         // piece identifier: {0: head, 1: skirt, 2: axe}
-    uint32_t carton_id_; // id of the carton where the piece comes from. Tracking purpose
 };
 
 std::ostream &operator<<(std::ostream &os, Piece piece)
@@ -46,33 +45,28 @@ std::ostream &operator<<(std::ostream &os, Piece piece)
 struct Carton
 {
     datastructure::LinkedList<Piece> pieces_; // fullfilled pieces array
-    uint32_t pieces_number_;             // number of pieces_
-    uint32_t id_;
 };
 
 /**
-* Retrieves random carton with given id_
+* Retrieves carton with random pieces inside.
 */
-Carton randomCarton(uint32_t id)
+Carton randomCarton()
 {
     Carton carton = Carton();
     // init pieces
-    datastructure::LinkedList<Piece> pieces;
     Piece piece;
-    for (int i = 0; i < PIECE_NUMBER; i++)
+    for (int i = 0; i < PIECES_NUMBER; i++)
     {
         piece = Piece();
-        piece.id_ = rand() % PIECE_NUMBER;
-        piece.carton_id_ = id;
-        pieces.add(piece);
+        piece.id_ = rand() % 3;
+        carton.pieces_.add(piece);
     }
-    carton.id_ = id;
     return carton;
 }
 
 std::ostream &operator<<(std::ostream &os, Carton carton)
 {
-    os << "id: " << carton.id_ << ", pieces: [ " << carton.pieces_ << " ]" << std::endl;
+    os << carton.pieces_;
     return os;
 }
 }

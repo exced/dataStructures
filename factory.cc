@@ -16,48 +16,48 @@
 #include "queue.h"
 #include "carton.h"
 
+/**
+* worker empties a queue in another -> chain of tasks. Returns the time taken.
+*/
+float worker(datastructure::LinkedList<factory::Piece> &job, datastructure::LinkedList<factory::Piece> &next, float working_time)
+{
+    float time_taken = 0.f;
+    
+}
+
 int main(int argc, const char *argv[])
 {
-    const int capacity = 100;
-    const int piece_number = 3; // Number of pieces inside a carton. Pieces are unique in a carton.
-    const int max_capacity = capacity * piece_number;
+    const int capacity = 100; // number of input cartons.
 
-    datastructure::LinkedList<factory::Carton> carton_queue;   // input queue
-    datastructure::LinkedList<factory::Piece> head_queue;      // independent machine
-    datastructure::LinkedList<factory::Piece> skirt_queue;     // independent machine
-    datastructure::LinkedList<factory::Piece> axe_queue;       // independent machine
-    datastructure::LinkedList<factory::Piece> assembler_queue; // output queue. dependent of head/skirt/axe
+    factory::Carton carton = factory::randomCarton();          // init input cartons : initially randomed. -> head/skirt/axe
+    datastructure::LinkedList<factory::Piece> head_queue;      // head -> assembler
+    datastructure::LinkedList<factory::Piece> skirt_queue;     // skirt -> assembler
+    datastructure::LinkedList<factory::Piece> axe_queue;       // axe -> assembler
+    datastructure::LinkedList<factory::Piece> assembler_queue; // head/skirt/axe -> assembled.
+    datastructure::LinkedList<factory::Piece> assembled_queue; // assembled -> done.
 
-    // init input cartons
-    for (int i = 0; i < capacity; i++)
-    {
-        carton_queue.add(factory::randomCarton(i));
-    }
     // load balancer
-    datastructure::LinkedList<factory::Piece> pieces;
     factory::Piece piece;
-    while (!carton_queue.empty())
+    while (!carton.pieces_.empty())
     {
-        pieces = carton_queue.remove().pieces_;
-        while (!pieces.empty())
+        piece = carton.pieces_.remove();
+        switch (piece.id_)
         {
-            piece = pieces.remove();
-            switch (piece.id_)
-            {
-            case 0: // head
-                head_queue.add(piece);
-                break;
-            case 1: // skirt
-                skirt_queue.add(piece);
-                break;
-            case 2: // axe
-                axe_queue.add(piece);
-                break;
-            default:
-                throw std::out_of_range("piece id out of range [0,1,2]");
-            }
+        case 0: // head
+            head_queue.add(piece);
+            break;
+        case 1: // skirt
+            skirt_queue.add(piece);
+            break;
+        case 2: // axe
+            axe_queue.add(piece);
+            break;
+        default:
+            throw std::out_of_range("piece id out of range [0,1,2]");
         }
     }
+
+    // scheduling simulation
 
     return 0;
 }

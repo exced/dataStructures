@@ -1,4 +1,4 @@
-//  Simple LinkedList implementation.
+//  Simple singly LinkedList implementation.
 //
 //  linkedlist.h
 //  datastructure
@@ -69,23 +69,20 @@ class LinkedList
     */
     void add(const T &element)
     {
+        // new Node
         Node *node = new Node();
         node->element_ = element;
         if (size_ == 0)
         {
             head_ = node;
+            tail_ = head_;
             size_++;
             return;
         }
-        if (size_ == 1)
-        {
-            tail_ = node;
-            head_->next_ = tail_;
-            size_++;
-            return;
-        }
-        size_++;
+        // append
         tail_->next_ = node;
+        tail_ = tail_->next_;        
+        size_++;
         return;
     }
 
@@ -98,7 +95,7 @@ class LinkedList
         {
             throw queue_empty_exception;
         }
-        Node *head = head_;
+        Node *head = head_; // delete purpose
         const T &element = head_->element_;
         size_--;
         head_ = head_->next_;
