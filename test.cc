@@ -19,15 +19,7 @@ float time_breakdown()
 
 int main(int argc, const char * argv[]) {
     srand(time(NULL));
-    std::cout << time_breakdown() << std::endl;
-    std::cout << time_breakdown() << std::endl;
-    std::cout << time_breakdown() << std::endl;
-    std::cout << time_breakdown() << std::endl;
-    std::cout << time_breakdown() << std::endl;
-    std::cout << time_breakdown() << std::endl;
-    std::cout << time_breakdown() << std::endl;
-    std::cout << time_breakdown() << std::endl;
-    std::cout << time_breakdown() << std::endl;
-    std::cout << time_breakdown() << std::endl;
+    float times[] = {1.f, 2.5f, 3.f};
+    std::cout << (*std::max_element(times, times + 3)) << std::endl;
     return 0;
 }

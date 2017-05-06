@@ -1,4 +1,4 @@
-//  Simple simulation of factory with linked machines to create items.
+//  Simple simulation of factory with linked machines to create items (Production chain).
 //
 //  factory.cc
 //  factory
@@ -17,8 +17,8 @@
 
 struct Piece
 {
-    uint8_t id_;          // piece identifier: {0: head, 1: skirt, 2: axe}
-    uint32_t time_track_; // time tracking since the beginning of the chain
+    uint8_t id_;       // piece identifier: {0: head, 1: skirt, 2: axe}
+    float time_track_; // time tracking since the beginning of the chain
 };
 
 /**
@@ -30,23 +30,24 @@ float time_breakdown()
 }
 
 /**
-* simulate a chained task job with a breakdown. Take 1 piece, enhances it and give it to the next worker.
+* simulate a chained task job with a breakdown. Take 1 piece, enhances it and give it to the next worker. Returns time after producting this piece.
 */
-void work(datastructure::LinkedList<Piece> &job, datastructure::LinkedList<Piece> &next, int quantity, int id_new, float time_taken)
+float work(datastructure::LinkedList<Piece> &job, datastructure::LinkedList<Piece> &next, int quantity, int id_new, float time_production, float time_current)
 {
     for (int i = 0; i < quantity; i++)
     {
         job.remove();
     }
     Piece piece = Piece();
-    piece.id_ = id_new;                                 // piece transformation
-    piece.time_track_ += time_taken + time_breakdown(); // timestamp tag
+    piece.id_ = id_new;                                                    // piece transformation
+    piece.time_track_ = time_current + time_production + time_breakdown(); // timestamp tag
     next.add(piece);
+    return piece.time_track_;
 }
 
 int main(int argc, const char *argv[])
 {
-    const int capacity = 10;    // number of input cartons.
+    const int capacity = 100;     // number of input cartons.
     const int pieces_number = 4; // number of different pieces. (head/skirt/axe/piston)
 
     // random seed
@@ -65,7 +66,7 @@ int main(int argc, const char *argv[])
     {
         piece = Piece();
         piece.id_ = rand() % (pieces_number - 1);
-        piece.time_track_ = 0;
+        piece.time_track_ = 0.f;
         carton.add(piece);
     }
 
@@ -92,21 +93,17 @@ int main(int argc, const char *argv[])
     float time_head = 0.f;
     float time_skirt = 0.f;
     float time_axe = 0.f;
-    float time_assembler = 0.f;
+    float time_piston = 0.f;
     // scheduling simulation
     while (!head_queue.empty() && !skirt_queue.empty() && !axe_queue.empty())
     {
         // workflow simulation
-        time_head += 2.f;
-        work(head_queue, assembler_queue, 1, 0, time_head);
-        time_skirt += 3.f;
-        work(skirt_queue, assembler_queue, 1, 1, time_skirt);
-        time_axe += 2.5f;
-        work(axe_queue, assembler_queue, 1, 2, time_axe);
+        time_head = work(head_queue, assembler_queue, 1, 0, 2.f, time_head);
+        time_skirt = work(skirt_queue, assembler_queue, 1, 1, 3.f, time_skirt);
+        time_axe = work(axe_queue, assembler_queue, 1, 2, 2.5f, time_axe);
+        // assembler depends on (head/skirt/axe)
         float times[] = {time_head, time_skirt, time_axe};
-        // assembler
-        time_assembler += 1.f + *std::max_element(times, times + pieces_number - 1);
-        work(assembler_queue, piston_queue, 3, 4, time_assembler);
+        time_piston = work(assembler_queue, piston_queue, 3, 4, 1.f, *std::max_element(times, times + pieces_number - 1));
     }
 
     // output of simulation
