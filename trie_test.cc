@@ -19,7 +19,11 @@ int main(int argc, const char *argv[])
 {
     datastructure::LinkedList<std::string> words;
     words.add("hello");
+    words.add("world");
     datastructure::Trie trie(words);
+    std::cout << trie << std::endl;
     std::cout << trie.contains("h") << std::endl;
+    std::cout << trie.contains("hello") << std::endl;
+    std::cout << trie.contains("world") << std::endl;
     return 0;
 }

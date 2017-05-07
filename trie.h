@@ -39,7 +39,7 @@ class Trie
         {
         }
 
-        Node(char data)
+        Node(const char data)
         {
             data_ = data;
         }
@@ -51,14 +51,14 @@ class Trie
         /**
         * Inserts the specified word in this trie, and recursively creates the child nodes.
         */
-        void add(const std::string &word)
+        void add(const std::string word)
         {
-            if (word.empty())
+            if (word.empty()) // terminal case
             {
                 return;
             }
             Node *child = children_[word[0]];
-            if (!child)
+            if (!child) // not found
             {
                 child = new Node(word[0]);
                 children_[word[0]] = child;
@@ -72,6 +72,15 @@ class Trie
                 child->terminates_ = true;
             }
             return;
+        }
+
+        friend std::ostream &operator<<(std::ostream &os, const Node &node)
+        {
+            for (std::pair<char, Node *> child : node.children_)
+            {
+                os << child.first << "::" << child.second << std::endl;
+            }
+            return os;
         }
     };
 
@@ -95,7 +104,7 @@ class Trie
     /**
         * Inserts the specified word in this trie, and recursively creates the child nodes.
         */
-    void add(const std::string &word)
+    void add(const std::string word)
     {
         root_->add(word);
         return;
@@ -104,7 +113,7 @@ class Trie
     /**
     * Retrieves true if this trie contains given word and false otherwise.
     */
-    bool contains(const std::string &word) const
+    bool contains(const std::string word) const
     {
         Node *curr = root_;
         for (int i = 0; i < word.size(); i++)
@@ -116,6 +125,22 @@ class Trie
             }
         }
         return curr->terminates_;
+    }
+
+    /**
+    * complete gives the list of possible words given a prefix.
+    */
+    datastructure::LinkedList<std::string> complete(const std::string prefix) const
+    {
+        datastructure::LinkedList<std::string> words;
+        root_->complete(prefix, words);
+        return words
+    }
+
+    friend std::ostream &operator<<(std::ostream &os, const Trie &trie)
+    {
+        os << *trie.root_;
+        return os;
     }
 };
 }

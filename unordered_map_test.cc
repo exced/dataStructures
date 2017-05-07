@@ -16,10 +16,14 @@
 
 int main(int argc, const char *argv[])
 {
-    std::unordered_map <std::string, int> m;
+    std::unordered_map<std::string, int> m;
     m["foo"] = 42;
     std::string t = "foo";
     std::cout << m[t] << std::endl;
+    for (std::pair<std::string, int> element : m)
+    {
+        std::cout << element.first << " :: " << element.second << std::endl;
+    }
     std::cout << m.at(t) << std::endl;
     return 0;
 }

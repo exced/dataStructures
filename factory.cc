@@ -22,7 +22,7 @@ struct Piece
 };
 
 /**
-* simulate a breakdown: add 5 to 10 minutes to repair, tenth precision
+* simulate a breakdown: probability: 1/4 -> add 5 to 10 minutes to repair, tenth precision
 */
 float time_breakdown()
 {
