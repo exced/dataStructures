@@ -40,9 +40,11 @@ int main(int argc, const char *argv[])
         distribution_stack.shuffle();
         bool distribution_token = true; // true if player1, false if player2
         // cards distribution
+        card::Card card;
         while (!distribution_stack.empty())
         {
-            distribution_token ? stack1.push(distribution_stack.pop()) : stack2.push(distribution_stack.pop());
+            card = distribution_stack.pop();
+            distribution_token ? stack1.push(card) : stack2.push(card);
             distribution_token = !distribution_token;
         }
 

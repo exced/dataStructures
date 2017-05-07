@@ -27,14 +27,8 @@ class Card
     uint32_t power_;
 
   public:
-    /**
-    * random card
-    */
     Card()
     {
-        color_ = color::random();
-        value_ = rand() % 10 + 1;
-        power_ = rand() % 4 + 1;
     }
 
     Card(color::Color color, uint32_t value, uint32_t power)
@@ -47,6 +41,16 @@ class Card
     ~Card(){
 
     };
+
+    /**
+    * random card
+    */
+    inline void setRandom()
+    {
+        color_ = color::random();
+        value_ = rand() % 10 + 1;
+        power_ = rand() % 4 + 1;
+    }
 
     inline float score()
     {

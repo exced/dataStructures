@@ -37,9 +37,11 @@ class CardStack : public datastructure::Stack<card::Card>
     */
     inline void fullfillRandom()
     {
-        while (push(card::Card()))
+        card::Card card;
+        do
         {
-        }
+            card.setRandom();
+        } while (push(card));
     }
 };
 }

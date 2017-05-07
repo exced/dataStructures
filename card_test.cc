@@ -16,8 +16,10 @@
 
 int main(int argc, const char *argv[])
 {
-    card::Card c1 = card::Card();
-    card::Card c2 = card::Card();
+    card::Card c1;
+    card::Card c2;
+    c1.setRandom();
+    c2.setRandom();
     std::cout << c1 << std::endl;
     std::cout << c2 << std::endl;
     card::Card c3 = card::Card(color::BLACK, 5, 1);

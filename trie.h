@@ -75,11 +75,10 @@ class Trie
             return;
         }
 
-      private:
         /**
         * Agglomerate all terminating words in given collector (lexicographic order).
         */
-        void words(datastructure::LinkedList<std::string> words_collector, datastructure::LinkedList<char> char_collector) const
+        void words(datastructure::LinkedList<std::string> &words_collector, datastructure::LinkedList<char> &char_collector) const
         {
             char_collector.add(element_);
             if (terminates_)
@@ -96,7 +95,6 @@ class Trie
             return;
         }
 
-      public:
         /**
         * Retrieves all terminating words.
         */
@@ -113,7 +111,7 @@ class Trie
         */
         friend std::ostream &operator<<(std::ostream &os, const Node &node)
         {
-            os << node.words();
+            os << node.element_;
             return os;
         }
     };
@@ -122,10 +120,7 @@ class Trie
     Node *root_;
 
   public:
-    const uint8_t ALPHABET_SIZE = 26;
-
-  public:
-    Trie(datastructure::LinkedList<std::string> words)
+    Trie(datastructure::LinkedList<std::string> &words)
     {
         root_ = new Node();
         while (!words.empty())
@@ -179,7 +174,7 @@ class Trie
     */
     friend std::ostream &operator<<(std::ostream &os, const Trie &trie)
     {
-        os << *trie.root_;
+        os << trie.root_->words();
         return os;
     }
 };
