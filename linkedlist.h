@@ -10,6 +10,8 @@
 #ifndef LINKEDLIST_H__
 #define LINKEDLIST_H__
 
+#include <vector>
+
 namespace datastructure
 {
 
@@ -42,6 +44,13 @@ class LinkedList
     LinkedList()
     {
         size_ = 0;
+    }
+
+    /**
+    * Copy constructor.
+    */
+    LinkedList(const LinkedList &other)
+    {
     }
 
     /**
@@ -82,7 +91,7 @@ class LinkedList
             throw queue_empty_exception;
         }
         return tail_->element_;
-    }    
+    }
 
     /**
     * Inserts the specified element at the end of this queue.
@@ -101,7 +110,7 @@ class LinkedList
         }
         // append
         tail_->next_ = node;
-        tail_ = tail_->next_;        
+        tail_ = tail_->next_;
         size_++;
         return;
     }
@@ -137,6 +146,33 @@ class LinkedList
     inline uint32_t size() const
     {
         return size_;
+    }
+
+    /**
+    * Retrieves the content of the list as vector.
+    */
+    inline std::vector<T> asArray() const
+    {
+        std::vector<T> vec;
+        Node *curr = head_;
+        while (curr)
+        {
+            vec.push_back(curr->element_);
+            curr = curr->next_;
+        }
+        return vec;
+    }
+
+    /**
+    * Free the list. It differs from delete that it keeps the root pointer so you can fulfill it later.
+    */
+    inline void free()
+    {
+        while (!empty())
+        {
+            remove();
+        }
+        return;
     }
 
     friend std::ostream &operator<<(std::ostream &os, const LinkedList &queue)

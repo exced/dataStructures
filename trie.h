@@ -12,7 +12,8 @@
 
 #include <stdbool.h>
 
-#include <unordered_map>
+#include <map>
+#include <unordered_set>
 #include <string>
 
 #include "linkedlist.h"
@@ -30,8 +31,8 @@ class Trie
     class Node
     {
       public:
-        char data_;
-        std::unordered_map<char, Node *> children_; // children of this node in the trie
+        char element_;
+        std::map<char, Node *> children_; // children of this node in the trie. Ordered to keep track of lexicographic order
         bool terminates_;
 
       public:
@@ -39,9 +40,9 @@ class Trie
         {
         }
 
-        Node(const char data)
+        Node(const char element)
         {
-            data_ = data;
+            element_ = element;
         }
 
         ~Node()
@@ -74,18 +75,54 @@ class Trie
             return;
         }
 
+      private:
+        /**
+        * Agglomerate all terminating words in given collector (lexicographic order).
+        */
+        void words(datastructure::LinkedList<std::string> words_collector, datastructure::LinkedList<char> char_collector) const
+        {
+            char_collector.add(element_);
+            if (terminates_)
+            { // new word : collect and next
+                std::vector<char> word = char_collector.asArray();
+                words_collector.add(std::string(word.begin(), word.end()));
+                char_collector.remove();
+                return;
+            }
+            for (std::pair<char, Node *> child : children_)
+            {
+                child.second->words(words_collector, char_collector);
+            }
+            return;
+        }
+
+      public:
+        /**
+        * Retrieves all terminating words.
+        */
+        inline datastructure::LinkedList<std::string> words() const
+        {
+            datastructure::LinkedList<std::string> words_collector;
+            datastructure::LinkedList<char> char_collector;
+            words(words_collector, char_collector);
+            return words_collector;
+        }
+
+        /**
+        * lexicographic order print
+        */
         friend std::ostream &operator<<(std::ostream &os, const Node &node)
         {
-            for (std::pair<char, Node *> child : node.children_)
-            {
-                os << child.first << "::" << child.second << std::endl;
-            }
+            os << node.words();
             return os;
         }
     };
 
   private:
     Node *root_;
+
+  public:
+    const uint8_t ALPHABET_SIZE = 26;
 
   public:
     Trie(datastructure::LinkedList<std::string> words)
@@ -133,10 +170,13 @@ class Trie
     datastructure::LinkedList<std::string> complete(const std::string prefix) const
     {
         datastructure::LinkedList<std::string> words;
-        root_->complete(prefix, words);
-        return words
+        //root_->complete(prefix, words);
+        return words;
     }
 
+    /**
+    * lexicographic order print
+    */
     friend std::ostream &operator<<(std::ostream &os, const Trie &trie)
     {
         os << *trie.root_;

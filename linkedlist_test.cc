@@ -11,6 +11,7 @@
 #include <stdbool.h>
 
 #include <iostream>
+#include <vector>
 
 #include "linkedlist.h"
 
@@ -26,12 +27,18 @@ int main(int argc, const char *argv[])
     queue.add(7);
     std::cout << "size: " << queue.size() << std::endl;
     std::cout << "queue: " << queue << std::endl;
+    std::cout << "vector: ";
+    for (auto &element : queue.asArray())
+    {
+        std::cout << element;
+    }
+    std::cout << std::endl;
     std::cout << "last: " << queue.peekLast() << std::endl;
     std::cout << queue.remove() << std::endl;
     std::cout << "size: " << queue.size() << std::endl;
     std::cout << queue.remove() << std::endl;
     std::cout << "size: " << queue.size() << std::endl;
     std::cout << queue.remove() << std::endl;
-    std::cout << "size: " << queue.size() << std::endl;    
+    std::cout << "size: " << queue.size() << std::endl;
     return 0;
 }

@@ -33,7 +33,7 @@ class Graph
     {
       public:
         uint32_t id_;
-        T data_;
+        T element_;
         datastructure::LinkedList<Node *> adjacents_;
 
       public:
@@ -42,10 +42,10 @@ class Graph
             id_ = id;
         }
 
-        Node(const uint32_t id, T data)
+        Node(const uint32_t id, T element)
         {
             id_ = id;
-            data_ = data;
+            element_ = element;
         }
 
         ~Node()
