@@ -15,8 +15,7 @@
 #include <map>
 #include <unordered_set>
 #include <string>
-
-#include "linkedlist.h"
+#include <vector>
 
 namespace datastructure
 {
@@ -78,14 +77,16 @@ class Trie
         /**
         * Agglomerate all terminating words in given collector (lexicographic order).
         */
-        void words(datastructure::LinkedList<std::string> &words_collector, datastructure::LinkedList<char> &char_collector) const
+        void words(std::vector<std::string> &words_collector, std::vector<char> char_collector) const
         {
-            char_collector.add(element_);
+            char_collector.push_back(element_);
             if (terminates_)
             { // new word : collect and next
-                std::vector<char> word = char_collector.asArray();
-                words_collector.add(std::string(word.begin(), word.end()));
-                char_collector.remove();
+                words_collector.push_back(std::string(char_collector.begin(), char_collector.end()));
+            }
+            if (!children_.size())
+            { // no child
+                char_collector.pop_back();
                 return;
             }
             for (std::pair<char, Node *> child : children_)
@@ -98,10 +99,10 @@ class Trie
         /**
         * Retrieves all terminating words.
         */
-        inline datastructure::LinkedList<std::string> words() const
+        inline std::vector<std::string> words() const
         {
-            datastructure::LinkedList<std::string> words_collector;
-            datastructure::LinkedList<char> char_collector;
+            std::vector<std::string> words_collector;
+            std::vector<char> char_collector;
             words(words_collector, char_collector);
             return words_collector;
         }
@@ -120,12 +121,15 @@ class Trie
     Node *root_;
 
   public:
-    Trie(datastructure::LinkedList<std::string> &words)
+    Trie(std::vector<std::string> &words)
     {
         root_ = new Node();
+        std::string word;
         while (!words.empty())
         {
-            root_->add(words.remove());
+            word = words.back();
+            root_->add(word);
+            words.pop_back();
         }
     }
 
@@ -162,11 +166,20 @@ class Trie
     /**
     * complete gives the list of possible words given a prefix.
     */
-    datastructure::LinkedList<std::string> complete(const std::string prefix) const
+    std::vector<std::string> complete(const std::string prefix) const
     {
-        datastructure::LinkedList<std::string> words;
-        //root_->complete(prefix, words);
-        return words;
+        std::vector<std::string> words;
+        // go to the last node matching this prefix
+        Node *curr = root_;
+        for (int i = 0; i < prefix.size(); i++)
+        {
+            curr = curr->children_[prefix[i]];
+            if (!curr)
+            { // not matching
+                return words;
+            }
+        }
+        return curr->words();
     }
 
     /**
@@ -174,7 +187,10 @@ class Trie
     */
     friend std::ostream &operator<<(std::ostream &os, const Trie &trie)
     {
-        os << trie.root_->words();
+        for (auto word : trie.root_->words())
+        {
+            os << word << ", ";
+        }
         return os;
     }
 };
