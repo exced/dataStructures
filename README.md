@@ -1,5 +1,10 @@
 # dataStructures
 
+Compile:
+```bash
+g++ -g myprogram.cc
+```
+
 # Work
 ## Namespaces
 ### card

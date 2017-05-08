@@ -107,7 +107,7 @@ int main(int argc, const char *argv[])
     }
 
     // output of simulation
-    std::cout << piston_queue.size() << " piston(s) assembled in " << piston_queue.elementLast().time_track_ << " minutes." << std::endl;
+    std::cout << piston_queue.size() << " piston(s) assembled in " << piston_queue.peekLast().time_track_ << " minutes." << std::endl;
 
     return 0;
 }

@@ -1,20 +1,20 @@
-//  Simple doubly LinkedList implementation.
+//  Simple doubly thread save LinkedList implementation.
 //
-//  linkedlist.h
+//  concurrentlinkedlist.h
 //  datastructure
 //
 //  Created by Thomas BARRAS on 17-05-04.
 //  Copyright © 2017 Exced. All rights reserved.
 //
 
-#ifndef LINKEDLIST_H__
-#define LINKEDLIST_H__
+#ifndef CONCURRENTLINKEDLIST_H__
+#define CONCURRENTLINKEDLIST_H__
 
 namespace datastructure
 {
 
 template <typename T>
-class LinkedList
+class ConcurrentLinkedList
 {
 
   private:
@@ -31,43 +31,43 @@ class LinkedList
     };
 
   public:
-    class Iterator
+    class iterator
     {
 
-        friend class LinkedList;
+        friend class ConcurrentLinkedList;
 
       private:
         Node *node_;
 
       private:
-        Iterator(Node *node)
+        iterator(Node *node)
         {
             node_ = node;
         }
 
       public:
-        Iterator()
+        iterator()
         {
         }
 
-        Iterator &operator++()
+        iterator &operator++()
         {
             node_ = node_->next_;
             return *this;
         }
 
-        Iterator &operator--()
+        iterator &operator--()
         {
             node_ = node_->previous_;
             return *this;
         }
 
-        bool operator==(const Iterator &other)
+        bool operator==(const iterator &other)
         {
             return node_ == other.node_;
         }
 
-        bool operator!=(const Iterator &other)
+        bool operator!=(const iterator &other)
         {
             return !(node_ == other.node_);
         }
@@ -83,7 +83,7 @@ class LinkedList
     uint32_t size_;
 
   public:
-    LinkedList()
+    ConcurrentLinkedList()
     {
         sentinal_ = new Node;
         size_ = 0;
@@ -92,21 +92,26 @@ class LinkedList
     /**
     * Copy constructor.
     */
-    LinkedList(const LinkedList &other)
+    ConcurrentLinkedList(const LinkedList &other)
     {
     }
 
-    Iterator begin() const
+    ~ConcurrentLinkedList()
     {
-        return Iterator(sentinal_->next_);
+        
     }
 
-    Iterator end() const
+    iterator begin() const
     {
-        return Iterator(sentinal_);
+        return iterator(sentinal_->next_);
     }
 
-    Iterator insert(Iterator position, T element)
+    iterator end() const
+    {
+        return iterator(sentinal_);
+    }
+
+    iterator insert(iterator position, T element)
     {
         size_++;
         Node *node = new Node;
@@ -116,10 +121,10 @@ class LinkedList
         node->previous_ = current->previous_;
         current->previous_->next_ = node;
         current->previous_ = node;
-        return Iterator(current);
+        return iterator(current);
     }
 
-    void erase(Iterator position)
+    void erase(iterator position)
     {
         Node *current = position.node_;
         current->previous_->next_ = current->next_;
@@ -211,4 +216,4 @@ class LinkedList
 };
 }
 
-#endif /* LINKEDLIST_H__ */
+#endif /* CONCURRENTLINKEDLIST_H__ */

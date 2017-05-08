@@ -19,28 +19,31 @@ int main(int argc, const char *argv[])
 {
     datastructure::LinkedList<int> queue;
     queue.add(1);
+    std::cout << "queue: " << queue << std::endl;
+    std::cout << "queue size: " << queue.size() << std::endl;
+    std::cout << "queue: " << queue.remove() << std::endl;
+    std::cout << "queue size: " << queue.size() << std::endl;
+    std::cout << "queue: " << queue.remove() << std::endl;
+    std::cout << "queue size: " << queue.size() << std::endl;
+    std::cout << "queue: " << queue.remove() << std::endl;
+    std::cout << "queue size: " << queue.size() << std::endl;
+    std::cout << "queue: " << queue << std::endl;
+    queue.pop_back();
+    std::cout << "queue: " << queue << std::endl;
     queue.add(2);
+    std::cout << "queue: " << queue << std::endl;
     queue.add(3);
     queue.add(4);
+    std::cout << "queue remove: " << queue.remove() << std::endl;
+    std::cout << "queue size: " << queue.size() << std::endl;
+    std::cout << "queue peek: " << queue.peek() << std::endl;
+    std::cout << "queue peek last: " << queue.peekLast() << std::endl;
+    std::cout << "queue: " << queue << std::endl;
     queue.add(5);
+    std::cout << "queue: " << queue << std::endl;
     queue.add(6);
+    std::cout << "queue: " << queue << std::endl;
     queue.add(7);
-    std::cout << "size: " << queue.size() << std::endl;
-    std::cout << "queue: " << queue << std::endl;
-    std::cout << "vector: ";
-    for (auto &element : queue.asArray())
-    {
-        std::cout << element;
-    }
-    std::cout << std::endl;
-    std::cout << "last: " << queue.peekLast() << std::endl;
-    std::cout << queue.remove() << std::endl;
-    std::cout << "size: " << queue.size() << std::endl;
-    std::cout << queue.remove() << std::endl;
-    std::cout << "size: " << queue.size() << std::endl;
-    std::cout << queue.remove() << std::endl;
-    std::cout << "size: " << queue.size() << std::endl;
-    std::cout << "queue: " << queue << std::endl;
     queue.free();
     std::cout << "free: " << queue << std::endl;
     std::cout << "free size: " << queue.size() << std::endl;

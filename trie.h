@@ -164,6 +164,14 @@ class Trie
     }
 
     /**
+    * remove a given word from this trie.
+    */
+    void remove(std::string word)
+    {
+
+    }
+
+    /**
     * complete gives the list of possible words given a prefix.
     */
     std::vector<std::string> complete(const std::string prefix) const
