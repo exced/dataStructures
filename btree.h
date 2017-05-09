@@ -12,7 +12,7 @@
 
 #include <stdbool.h>
 
-#include <unordered_set>
+#include <unordered_map>
 #include <string>
 #include <vector>
 
@@ -33,7 +33,6 @@ class BTree
         T element_;
         Node *left_;
         Node *right_;
-        Node *parent_;
 
       public:
         Node(const T &element)
@@ -41,44 +40,20 @@ class BTree
             element_ = element;
             left_ = NULL;
             right_ = NULL;
-            parent_ = NULL;
         }
 
         ~Node()
         {
         }
 
-        void setLeftChild(const T &element)
+        void setLeftChild(Node *left)
         {
-            left_ = new Node(element);
-            left_->parent_ = this;
+            left_ = left;
         }
 
-        void setRightChild(const T &element)
+        void setRightChild(Node *right)
         {
-            right_ = new Node(element);
-            right_->parent_ = this;
-        }
-
-        /**
-        * Retrieves node of given element
-        */
-        Node *findNode(const T &element)
-        {
-            if (element_ == element)
-            {
-                return this;
-            }
-            Node *child;
-            if (left_)
-            {
-                child = left_->findNode(element);
-            }
-            if (!child && right_)
-            {
-                child = right_->findNode(element);
-            }
-            return child;
+            right_ = right;
         }
 
         /**
@@ -144,11 +119,13 @@ class BTree
 
   private:
     Node *root_;
+    std::unordered_map<T, Node *> nodes_lookup_; // Nodes lookup
 
   public:
     BTree(const T &element)
     {
         root_ = new Node(element);
+        nodes_lookup_[element] = root_;
     }
 
     ~BTree()
@@ -160,10 +137,12 @@ class BTree
     */
     void setLeftChild(const T &parent_element, const T &element)
     {
-        Node *node = findNode(parent_element);
-        if (node)
+        Node *parent = findNode(parent_element);
+        Node *child = new Node(element);
+        if (parent)
         {
-            node->setLeftChild(element);
+            parent->setLeftChild(child);
+            nodes_lookup_[element] = child;
         }
     }
 
@@ -172,10 +151,12 @@ class BTree
     */
     void setRightChild(const T &parent_element, const T &element)
     {
-        Node *node = findNode(parent_element);
-        if (node)
+        Node *parent = findNode(parent_element);
+        Node *child = new Node(element);
+        if (parent)
         {
-            node->setRightChild(element);
+            parent->setRightChild(child);
+            nodes_lookup_[element] = child;
         }
     }
 
@@ -185,7 +166,7 @@ class BTree
     */
     Node *findNode(const T &element)
     {
-        return root_->findNode(element);
+        return nodes_lookup_[element];
     }
 
   public:
