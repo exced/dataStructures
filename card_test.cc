@@ -16,6 +16,7 @@
 
 int main(int argc, const char *argv[])
 {
+    srand(time(NULL));
     card::Card c1;
     card::Card c2;
     c1.setRandom();

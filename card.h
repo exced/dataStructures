@@ -43,11 +43,19 @@ class Card
     };
 
     /**
+    * Retrieves random color black or red
+    */
+    color::Color blackOrRed()
+    {
+        return (rand() % 2) ? color::Color::BLACK : color::Color::RED;
+    }
+
+    /**
     * random card
     */
     inline void setRandom()
     {
-        color_ = color::random();
+        color_ = blackOrRed();
         value_ = rand() % 10 + 1;
         power_ = rand() % 4 + 1;
     }
@@ -68,7 +76,12 @@ class Card
         {
             return value_ < card.value_;
         }
-        return color_ < card.color_;
+        // Red > Black
+        if (color_ == color::Color::RED)
+        {
+            return true;
+        }
+        return false;
     }
 
     bool operator==(const Card &card)

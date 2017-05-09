@@ -15,6 +15,7 @@
 #include "color.h"
 
 int main(int argc, const char * argv[]) {
+    srand(time(NULL));
     const color::Color r = color::RED;
     const color::Color b = color::BLACK;
     const color::Color random = color::random();

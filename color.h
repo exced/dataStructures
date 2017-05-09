@@ -13,9 +13,12 @@
 namespace color
 {
 
-// Color enum. Warning: order matters. Red > Black
+// Color enum.
 enum Color
 {
+    GREEN,
+    BLUE,
+    BROWN,
     BLACK,
     RED,
     FLAG_NUMBER,
@@ -33,6 +36,15 @@ std::ostream &operator<<(std::ostream &os, Color color)
 {
     switch (color)
     {
+    case GREEN:
+        os << "green";
+        break;
+    case BLUE:
+        os << "blue";
+        break;
+    case BROWN:
+        os << "brown";
+        break;
     case BLACK:
         os << "black";
         break;
