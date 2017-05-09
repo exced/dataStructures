@@ -26,7 +26,7 @@ int main(int argc, const char *argv[])
     Person eddard = {1, "Eddard", "Stark", 260, color::Color::BROWN};
     Person catelyn = {2, "Catelyn", "Tully", 262, color::Color::BLUE};
     Person rickard = {3, "Rickard", "Stark", 244, color::Color::BROWN};
-    Person unknown = {3, "Unknown", "Unknown", 246, color::Color::BROWN};
+    Person unknown = {4, "Unknown", "Unknown", 246, color::Color::BROWN};
     datastructure::BTree<Person> tree(jon); // root
 
     tree.setLeftChild(jon, eddard);
