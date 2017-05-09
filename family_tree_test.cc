@@ -17,40 +17,11 @@
 
 #include "btree.h"
 #include "color.h"
-
-struct Person
-{
-    uint32_t id_;
-    std::string firstname_;
-    std::string lastname_;
-    uint32_t birthyear_;
-    color::Color eyes_color_;
-};
-
-bool operator==(const Person &lhs, const Person &rhs)
-{
-    return lhs.id_ == rhs.id_;
-}
-
-std::ostream &
-operator<<(std::ostream &os, const Person &person)
-{
-    os << '{' << person.id_ << "," << person.firstname_ << "," << person.lastname_ << "," << person.birthyear_ << "," << person.eyes_color_ << '}';
-    return os;
-}
-
-std::ostream &
-operator<<(std::ostream &os, const std::vector<Person> &persons)
-{
-    for (auto element : persons)
-    {
-        os << element << " ";
-    }
-    return os;
-}
+#include "person.h"
 
 int main(int argc, const char *argv[])
 {
+    // struct Person {.id_, .firstname_, .lastname_, .birthdate_, .eyes_color_}
     Person jon = {0, "Jon", "Snow", 284, color::Color::BROWN};
     Person eddard = {1, "Eddard", "Stark", 260, color::Color::BROWN};
     Person catelyn = {2, "Catelyn", "Tully", 262, color::Color::BLUE};
@@ -63,8 +34,6 @@ int main(int argc, const char *argv[])
     tree.setLeftChild(eddard, rickard);
     tree.setRightChild(eddard, unknown);
     std::cout << "Tree size: " << tree.height() << std::endl;
-    std::cout << "Find Jon: " << tree.find(jon) << std::endl;
-    std::cout << "Find Eddard: " << tree.find(eddard) << std::endl;
     std::cout << "inOrder: " << tree.inOrder() << std::endl;
     std::cout << "preOrder: " << tree.preOrder() << std::endl;
     std::cout << "postOrder: " << tree.postOrder() << std::endl;
