@@ -105,7 +105,7 @@ class Stack
     {
         for (int i = stack.size() - 1; i >= 0; i--)
         {
-            os << stack.elements_[i] << ", ";
+            os << stack.elements_[i] << " ";
         }
         return os;
     }

@@ -27,10 +27,25 @@ struct Person
     color::Color eyes_color_;
 };
 
+bool operator==(const Person &lhs, const Person &rhs)
+{
+    return lhs.id_ == rhs.id_;
+}
+
 std::ostream &
 operator<<(std::ostream &os, const Person &person)
 {
-    os << person.id_ << "," << person.firstname_ << "," << person.lastname_ << "," << person.birthyear_ << "," << person.eyes_color_;
+    os << '{' << person.id_ << "," << person.firstname_ << "," << person.lastname_ << "," << person.birthyear_ << "," << person.eyes_color_ << '}';
+    return os;
+}
+
+std::ostream &
+operator<<(std::ostream &os, const std::vector<Person> &persons)
+{
+    for (auto element : persons)
+    {
+        os << element << " ";
+    }
     return os;
 }
 
@@ -42,5 +57,16 @@ int main(int argc, const char *argv[])
     Person rickard = {3, "Rickard", "Stark", 244, color::Color::BROWN};
     Person unknown = {3, "Unknown", "Unknown", 246, color::Color::BROWN};
     datastructure::BTree<Person> tree(jon); // root
+
+    tree.setLeftChild(jon, eddard);
+    tree.setRightChild(jon, catelyn);
+    tree.setLeftChild(eddard, rickard);
+    tree.setRightChild(eddard, unknown);
+    std::cout << "Tree size: " << tree.height() << std::endl;
+    std::cout << "Find Jon: " << tree.find(jon) << std::endl;
+    std::cout << "Find Eddard: " << tree.find(eddard) << std::endl;
+    std::cout << "inOrder: " << tree.inOrder() << std::endl;
+    std::cout << "preOrder: " << tree.preOrder() << std::endl;
+    std::cout << "postOrder: " << tree.postOrder() << std::endl;
     return 0;
 }

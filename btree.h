@@ -14,6 +14,7 @@
 
 #include <unordered_set>
 #include <string>
+#include <vector>
 
 namespace datastructure
 {
@@ -38,49 +39,97 @@ class BTree
         Node(const T &element)
         {
             element_ = element;
+            left_ = NULL;
+            right_ = NULL;
+            parent_ = NULL;
         }
 
         ~Node()
         {
         }
 
-        void setLeftChild(Node &left)
+        void setLeftChild(const T &element)
         {
-            left_ = left;
-            if (left)
-            {
-                left.parent_ = this;
-            }
+            left_ = new Node(element);
+            left_->parent_ = this;
         }
 
-        void setRightChild(Node &right)
+        void setRightChild(const T &element)
         {
-            right_ = right;
-            if (right)
-            {
-                right.parent_ = this;
-            }
+            right_ = new Node(element);
+            right_->parent_ = this;
         }
 
         /**
-        * Retrieves node of given id
+        * Retrieves node of given element
         */
-        Node *findNode(uint32_t id)
+        Node *findNode(const T &element)
         {
-            if (id_ == id)
+            if (element_ == element)
             {
                 return this;
             }
             Node *child;
             if (left_)
             {
-                child = left_.find(id);
+                child = left_->findNode(element);
             }
             if (!child && right_)
             {
-                child = right_.find(id);
+                child = right_->findNode(element);
             }
             return child;
+        }
+
+        /**
+        * Agglomerate element of node in a queue.
+        */
+        void visit(std::vector<T> &queue) const
+        {
+            queue.push_back(element_);
+        }
+
+        void inOrder(std::vector<T> &queue) const
+        {
+            if (!this)
+            {
+                return;
+            }
+            left_->inOrder(queue);
+            visit(queue);
+            right_->inOrder(queue);
+        }
+
+        void preOrder(std::vector<T> &queue) const
+        {
+            if (!this)
+            {
+                return;
+            }
+            visit(queue);
+            left_->preOrder(queue);
+            right_->preOrder(queue);
+        }
+
+        void postOrder(std::vector<T> &queue) const
+        {
+            if (!this)
+            {
+                return;
+            }
+            left_->postOrder(queue);
+            right_->postOrder(queue);
+            visit(queue);
+        }
+
+        /**
+        * Returns the height of the tree.
+        */
+        inline int height() const
+        {
+            int leftHeight = left_ ? left_->height() : 0;
+            int rightHeight = right_ ? right_->height() : 0;
+            return 1 + std::max(leftHeight, rightHeight);
         }
 
         /**
@@ -106,89 +155,77 @@ class BTree
     {
     }
 
-    void visit(Node &root)
+    /**
+    * set left child of parent node.
+    */
+    void setLeftChild(const T &parent_element, const T &element)
     {
-        std::cout << "visit: " << root << std::endl;
+        Node *node = findNode(parent_element);
+        if (node)
+        {
+            node->setLeftChild(element);
+        }
     }
 
     /**
-    * set left child of node of given id
+    * set right child of parent node.
     */
-    void setLeft(uint32_t id, const T &element)
+    void setRightChild(const T &parent_element, const T &element)
     {
+        Node *node = findNode(parent_element);
+        if (node)
+        {
+            node->setRightChild(element);
+        }
     }
 
   private:
     /**
-    * Retrieves node of given id
+    * Retrieves node of given element.
     */
-    Node *findNode(uint32_t id)
+    Node *findNode(const T &element)
     {
-        return root_.findNode(id);
+        return root_->findNode(element);
     }
 
   public:
     /**
-    * Retrieves element of node of given id
+    * in order traversal. Agglomerate visited node in queue.
     */
-    const T &find(uint32_t id)
+    inline const std::vector<T> inOrder() const
     {
-        return findNode(id).element_;
+        std::vector<T> queue;
+        root_->inOrder(queue);
+        return queue;
     }
 
-    void inOrder(Node &root)
-    {
-        if (!root)
-        {
-            return;
-        }
-        inOrder(root.left_);
-        visit(root);
-        inOrder(root.right_);
-    }
-
-    void preOrder(Node &root)
-    {
-        if (!root)
-        {
-            return;
-        }
-        visit(root);
-        preOrder(root.left_);
-        preOrder(root.right_);
-    }
-
-    void postOrder(Node &root)
-    {
-        if (!root)
-        {
-            return;
-        }
-        postOrder(root.left_);
-        postOrder(root.right_);
-        visit(root);
-    }
-
-  private:
     /**
-    * Returns the height of the tree.
+    * pre order traversal. Agglomerate visited node in queue.
     */
-    inline int height()
+    inline const std::vector<T> preOrder() const
     {
-        return (height(root_));
+        std::vector<T> queue;
+        root_->preOrder(queue);
+        return queue;
+    }
+
+    /**
+    * post order traversal. Agglomerate visited node in queue.
+    */
+    inline const std::vector<T> postOrder() const
+    {
+        std::vector<T> queue;
+        root_->postOrder(queue);
+        return queue;
     }
 
   public:
     /**
     * Returns the height of the tree.
     */
-    int height(Node &node)
+    inline int height() const
     {
-        if (!node)
-        {
-            return -1;
-        }
-        return std::max(height(node->left_), height(node->right_)) + 1;
+        return root_->height();
     }
 
     /**
@@ -196,6 +233,10 @@ class BTree
     */
     friend std::ostream &operator<<(std::ostream &os, const BTree &btree)
     {
+        for (auto element : btree.inOrder())
+        {
+            os << element << " ";
+        }
         return os;
     }
 };

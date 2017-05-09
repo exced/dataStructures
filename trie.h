@@ -15,6 +15,7 @@
 #include <map>
 #include <unordered_set>
 #include <string>
+#include <vector>
 
 namespace datastructure
 {
@@ -196,7 +197,7 @@ class Trie
     {
         for (auto word : trie.root_->words())
         {
-            os << word << ", ";
+            os << word << " ";
         }
         return os;
     }

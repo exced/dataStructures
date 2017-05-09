@@ -132,7 +132,7 @@ class Queue
     {
         for (int i = 0; i < queue.size(); i++)
         {
-            os << queue.elements_[queue.head_ + i] << ", ";
+            os << queue.elements_[queue.head_ + i] << " ";
         }
         return os;
     }
