@@ -44,8 +44,5 @@ int main(int argc, const char *argv[])
     queue.add(6);
     std::cout << "queue: " << queue << std::endl;
     queue.add(7);
-    queue.free();
-    std::cout << "free: " << queue << std::endl;
-    std::cout << "free size: " << queue.size() << std::endl;
     return 0;
 }

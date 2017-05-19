@@ -1,4 +1,4 @@
-//  Simple doubly thread save LinkedList implementation.
+//  Simple doubly LinkedList implementation with all nodes running a different thread.
 //
 //  concurrentlinkedlist.h
 //  datastructure
@@ -10,17 +10,24 @@
 #ifndef CONCURRENTLINKEDLIST_H__
 #define CONCURRENTLINKEDLIST_H__
 
+#include <vector>
+#include <future>
+#include <thread>
+
+#include "channel.h"
+
 namespace datastructure
 {
 
-template <typename T>
 class ConcurrentLinkedList
 {
 
   private:
     struct Node
     {
-        T element_;
+        int element_;
+        int sum_ = 0;
+        Channel<int> channel_;
         Node *previous_;
         Node *next_;
         Node()
@@ -28,10 +35,40 @@ class ConcurrentLinkedList
             previous_ = this;
             next_ = this;
         }
+        /**
+        * run do a round trip to sum nodes. 
+        * Wait call from next_ (except for tail), then send to its previous_ node until begin().
+        * Wait call from previous_ (except for head), then update sum_ and send to its next_ node until end().
+        */
+        void run()
+        {
+            auto b = std::async(std::launch::async, [&] {
+                while (true)
+                {
+                    int r;
+                    // send left
+                    channel_ >> r;
+                    sum_ = element_ + r;
+                    previous_->send(sum_);
+                    // send right
+                    channel_ >> r;
+                    sum_ = r;
+                    next_->send(sum_);
+                    break;
+                }
+            });
+        }
+        /**
+        * send put given input into channel_
+        */
+        void send(int element)
+        {
+            channel_ << element;
+        }
     };
 
   public:
-    class iterator
+    class Iterator
     {
 
         friend class ConcurrentLinkedList;
@@ -40,34 +77,34 @@ class ConcurrentLinkedList
         Node *node_;
 
       private:
-        iterator(Node *node)
+        Iterator(Node *node)
         {
             node_ = node;
         }
 
       public:
-        iterator()
+        Iterator()
         {
         }
 
-        iterator &operator++()
+        Iterator &operator++()
         {
             node_ = node_->next_;
             return *this;
         }
 
-        iterator &operator--()
+        Iterator &operator--()
         {
             node_ = node_->previous_;
             return *this;
         }
 
-        bool operator==(const iterator &other)
+        bool operator==(const Iterator &other)
         {
             return node_ == other.node_;
         }
 
-        bool operator!=(const iterator &other)
+        bool operator!=(const Iterator &other)
         {
             return !(node_ == other.node_);
         }
@@ -92,26 +129,25 @@ class ConcurrentLinkedList
     /**
     * Copy constructor.
     */
-    ConcurrentLinkedList(const LinkedList &other)
+    ConcurrentLinkedList(const ConcurrentLinkedList &other)
     {
     }
 
     ~ConcurrentLinkedList()
     {
-        
     }
 
-    iterator begin() const
+    Iterator begin() const
     {
-        return iterator(sentinal_->next_);
+        return Iterator(sentinal_->next_);
     }
 
-    iterator end() const
+    Iterator end() const
     {
-        return iterator(sentinal_);
+        return Iterator(sentinal_);
     }
 
-    iterator insert(iterator position, T element)
+    Iterator insert(Iterator position, int element)
     {
         size_++;
         Node *node = new Node;
@@ -121,10 +157,10 @@ class ConcurrentLinkedList
         node->previous_ = current->previous_;
         current->previous_->next_ = node;
         current->previous_ = node;
-        return iterator(current);
+        return Iterator(current);
     }
 
-    void erase(iterator position)
+    void erase(Iterator position)
     {
         Node *current = position.node_;
         current->previous_->next_ = current->next_;
@@ -137,7 +173,7 @@ class ConcurrentLinkedList
         return;
     }
 
-    inline const T &peek() const
+    inline const int &peek() const
     {
         return begin().node_->element_;
     }
@@ -145,7 +181,7 @@ class ConcurrentLinkedList
     /**
     * Retrieves, but does not remove, the tail of this queue, or returns null if this queue is empty.
     */
-    inline const T &peekLast() const
+    inline const int &peekLast() const
     {
         return end().node_->previous_->element_;
     }
@@ -153,7 +189,7 @@ class ConcurrentLinkedList
     /**
     * Append given data to the end of the list (tail).
     */
-    void add(const T &element)
+    void add(const int &element)
     {
         insert(end(), element);
     }
@@ -161,9 +197,9 @@ class ConcurrentLinkedList
     /**
     * Retrieves and removes the head of this queue.
     */
-    inline const T &remove()
+    inline const int &remove()
     {
-        const T &element = begin().node_->element_;
+        const int &element = begin().node_->element_;
         erase(begin());
         return element;
     }
@@ -194,18 +230,37 @@ class ConcurrentLinkedList
     }
 
     /**
-    * Free the list. It differs from delete that it keeps the root pointer so you can fulfill it later.
+    * Worker is a type with a thread and a channel to communicate with this thread.
     */
-    inline void free()
+    struct Worker
     {
-        while (!empty())
+        Channel<int> channel_;
+        std::thread thread_;
+    };
+
+    /**
+    * Sum of all threaded nodes.
+    */
+    int
+    sum()
+    {
+        std::vector<Worker> workers;
+        for (auto i = begin(); i != end(); ++i)
         {
-            remove();
+            Worker worker = {Channel<int>(1), std::thread(&Node::run, &i.node_)};
+            workers.push_back(worker);
         }
-        return;
+        // start tail
+        Channel<int> go = workers.back().channel_;
+        go << 1;
+        for (auto i = workers.begin(); i != workers.end(); ++i)
+        {
+            i->thread_.join();
+        }
+        return begin().node_->sum_;
     }
 
-    friend std::ostream &operator<<(std::ostream &os, const LinkedList &queue)
+    friend std::ostream &operator<<(std::ostream &os, const ConcurrentLinkedList &queue)
     {
         for (auto i = queue.begin(); i != queue.end(); ++i)
         {

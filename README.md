@@ -2,7 +2,7 @@
 
 Compile:
 ```bash
-g++ -g myprogram.cc
+g++ -std=c++11 -g myprogram.cc
 ```
 
 # Work

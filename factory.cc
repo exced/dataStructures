@@ -17,7 +17,7 @@
 
 struct Piece
 {
-    uint8_t id_;       // piece identifier: {0: head, 1: skirt, 2: axe}
+    uint8_t id_;       // piece identifier: {0: head, 1: skirt, 2: shaft}
     float time_track_; // time tracking since the beginning of the chain
 };
 
@@ -48,16 +48,16 @@ float work(datastructure::LinkedList<Piece> &job, datastructure::LinkedList<Piec
 int main(int argc, const char *argv[])
 {
     const int capacity = 100;     // number of input cartons.
-    const int pieces_number = 4; // number of different pieces. (head/skirt/axe/piston)
+    const int pieces_number = 4; // number of different pieces. (head/skirt/shaft/piston)
 
     // random seed
     srand(time(NULL));
 
-    datastructure::LinkedList<Piece> carton;          // -> head/skirt/axe
+    datastructure::LinkedList<Piece> carton;          // -> head/skirt/shaft
     datastructure::LinkedList<Piece> head_queue;      // head -> assembler
     datastructure::LinkedList<Piece> skirt_queue;     // skirt -> assembler
-    datastructure::LinkedList<Piece> axe_queue;       // axe -> assembler
-    datastructure::LinkedList<Piece> assembler_queue; // head/skirt/axe -> piston.
+    datastructure::LinkedList<Piece> shaft_queue;       // shaft -> assembler
+    datastructure::LinkedList<Piece> assembler_queue; // head/skirt/shaft -> piston.
     datastructure::LinkedList<Piece> piston_queue;    // piston stack
 
     // init input cartons : initially randomed pieces.
@@ -82,8 +82,8 @@ int main(int argc, const char *argv[])
         case 1: // skirt
             skirt_queue.add(piece);
             break;
-        case 2: // axe
-            axe_queue.add(piece);
+        case 2: // shaft
+            shaft_queue.add(piece);
             break;
         default:
             throw std::out_of_range("piece id out of range [0,1,2]");
@@ -92,17 +92,17 @@ int main(int argc, const char *argv[])
 
     float time_head = 0.f;
     float time_skirt = 0.f;
-    float time_axe = 0.f;
+    float time_shaft = 0.f;
     float time_piston = 0.f;
     // scheduling simulation
-    while (!head_queue.empty() && !skirt_queue.empty() && !axe_queue.empty())
+    while (!head_queue.empty() && !skirt_queue.empty() && !shaft_queue.empty())
     {
         // workflow simulation
         time_head = work(head_queue, assembler_queue, 1, 0, 2.f, time_head);
         time_skirt = work(skirt_queue, assembler_queue, 1, 1, 3.f, time_skirt);
-        time_axe = work(axe_queue, assembler_queue, 1, 2, 2.5f, time_axe);
-        // assembler depends on (head/skirt/axe)
-        float times[] = {time_head, time_skirt, time_axe};
+        time_shaft = work(shaft_queue, assembler_queue, 1, 2, 2.5f, time_shaft);
+        // assembler depends on (head/skirt/shaft)
+        float times[] = {time_head, time_skirt, time_shaft};
         time_piston = work(assembler_queue, piston_queue, 3, 4, 1.f, *std::max_element(times, times + pieces_number - 1));
     }
 

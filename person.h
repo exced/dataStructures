@@ -1,4 +1,4 @@
-//  Simple Person struct
+//  Simple Person struct. Used for Family Tree. Field id_ should be unique.
 //
 //  person.h
 //  person

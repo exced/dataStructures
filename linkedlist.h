@@ -188,18 +188,6 @@ class LinkedList
         return size_;
     }
 
-    /**
-    * Free the list. It differs from delete that it keeps the root pointer so you can fulfill it later.
-    */
-    inline void free()
-    {
-        while (!empty())
-        {
-            remove();
-        }
-        return;
-    }
-
     friend std::ostream &operator<<(std::ostream &os, const LinkedList &queue)
     {
         for (auto i = queue.begin(); i != queue.end(); ++i)
