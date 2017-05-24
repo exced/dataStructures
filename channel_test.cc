@@ -18,43 +18,38 @@
 #include "channel.h"
 
 static const int kGo = 0;
-static const int kQuit = 1;
+static const int kQuit = -1;
 
 Channel<int> sayHello(0), sayWorld(0);
 
 void hello()
 {
-    auto d = std::async(std::launch::async, [&] {
-        for (int i = 0; i < 5; ++i)
-        {
-            const int i_ = i;
-            std::cout << "Hello ";
-            sayWorld << kGo;
-            int a;
-            sayHello >> a;
-        }
-        sayWorld << kQuit;
-    });
+    for (int i = 0; i < 5; ++i)
+    {
+        sayWorld << i;
+        int a;
+        sayHello >> a;
+    }
+    sayWorld << kQuit;
 }
 
 void world()
 {
-    auto b = std::async(std::launch::async, [&] {
-        while (true)
+    while (true)
+    {
+        int reply;
+        sayWorld >> reply;
+        if (reply == kQuit)
         {
-            int reply;
-            sayWorld >> reply;
-            if (reply == kQuit)
-                break;
-            std::cout << reply;
-            sayHello << kGo;
+            break;
         }
-    });
+        std::cout << reply;
+        sayHello << kGo;
+    }
 }
 
 int main(int argc, const char *argv[])
 {
-
     std::thread t1(hello);
     std::thread t2(world);
 

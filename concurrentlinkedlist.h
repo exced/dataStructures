@@ -11,7 +11,6 @@
 #define CONCURRENTLINKEDLIST_H__
 
 #include <vector>
-#include <future>
 #include <thread>
 
 #include "channel.h"
@@ -27,7 +26,7 @@ class ConcurrentLinkedList
     {
         int element_;
         int sum_ = 0;
-        Channel<int> channel_;
+        Channel<int> *channel_;
         Node *previous_;
         Node *next_;
         Node()
@@ -37,33 +36,32 @@ class ConcurrentLinkedList
         }
         /**
         * run do a round trip to sum nodes. 
-        * Wait call from next_ (except for tail), then send to its previous_ node until begin().
-        * Wait call from previous_ (except for head), then update sum_ and send to its next_ node until end().
+        * Wait call from previous_ (except for head), then send to its next_ node until end().
+        * Wait call from next_ (except for tail), then update sum_ and send to its previous_ node until begin().
         */
-        void run()
+        void run(Channel<int> *channel)
         {
-            auto b = std::async(std::launch::async, [&] {
-                while (true)
-                {
-                    int r;
-                    // send left
-                    channel_ >> r;
-                    sum_ = element_ + r;
-                    previous_->send(sum_);
-                    // send right
-                    channel_ >> r;
-                    sum_ = r;
-                    next_->send(sum_);
-                    break;
-                }
-            });
+            channel_ = channel;
+            int r;
+            // receive from previous_
+            *channel_ >> r;
+            sum_ = element_ + r;
+            std::cout << "received channel " << r << std::endl;
+            // send next_
+            next_->send(sum_);
+            // receive from next_
+            *channel_ >> r;
+            sum_ = r;
+            // send previous_
+            previous_->send(sum_);
         }
         /**
         * send put given input into channel_
         */
         void send(int element)
         {
-            channel_ << element;
+            *channel_ << element;
+            std::cout << "send channel " << element << std::endl;
         }
     };
 
@@ -230,32 +228,28 @@ class ConcurrentLinkedList
     }
 
     /**
-    * Worker is a type with a thread and a channel to communicate with this thread.
-    */
-    struct Worker
-    {
-        Channel<int> channel_;
-        std::thread thread_;
-    };
-
-    /**
     * Sum of all threaded nodes.
     */
     int
     sum()
     {
-        std::vector<Worker> workers;
+        Channel<int> *head_chan;
+        std::vector<std::thread> workers;
         for (auto i = begin(); i != end(); ++i)
         {
-            Worker worker = {Channel<int>(1), std::thread(&Node::run, &i.node_)};
-            workers.push_back(worker);
+            Channel<int> *channel = new Channel<int>(0);
+            // ref to head channel
+            if (i == begin())
+            {
+                head_chan = channel;
+            }
+            workers.emplace_back(&Node::run, i.node_, channel);
         }
-        // start tail
-        Channel<int> go = workers.back().channel_;
-        go << 1;
-        for (auto i = workers.begin(); i != workers.end(); ++i)
+        // start head
+        *head_chan << 0;
+        for (auto &t : workers)
         {
-            i->thread_.join();
+            t.join();
         }
         return begin().node_->sum_;
     }

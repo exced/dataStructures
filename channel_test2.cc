@@ -23,32 +23,29 @@ Channel<int> out(1), in(1);
 
 void sendInts()
 {
-    auto d = std::async(std::launch::async, [&] {
-        for (int i = 1; i < 5; i++)
-        {
-            out << i;
-            int rcvd;
-            in >> rcvd;
-
-        }
-        out << kQuit;
-    });
+    for (int i = 1; i < 5; i++)
+    {
+        out << i;
+        int rcvd;
+        in >> rcvd;
+    }
+    out << kQuit;
 }
 
 int sum()
 {
     int res = 0;
-    auto b = std::async(std::launch::async, [&] {
-        while (true)
+    while (true)
+    {
+        int reply;
+        out >> reply;
+        if (reply == kQuit)
         {
-            int reply;
-            out >> reply;
-            if (reply == kQuit)
-                return res;
-            res += reply;
-            in << 1;
+            return res;
         }
-    });
+        res += reply;
+        in << 1;
+    }
     return res;
 }
 

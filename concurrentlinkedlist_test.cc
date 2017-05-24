@@ -17,10 +17,11 @@
 int main(int argc, const char * argv[]) {
     datastructure::ConcurrentLinkedList list;
     list.add(0);
-    list.add(1);
+    list.add(4);
     list.add(2);
     list.add(3);
     int s = list.sum();
-    std::cout << "multi threaded sum: " << s << std::endl;
+    std::cout << "multi threaded sum: " << s << std::endl;
+    std::cout << "list: " << list << std::endl;
     return 0;
 }
