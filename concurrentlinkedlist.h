@@ -26,7 +26,7 @@ class ConcurrentLinkedList
     {
         int element_;
         int sum_ = 0;
-        Channel<int> *channel_;
+        Channel<int> channel_;
         Node *previous_;
         Node *next_;
         Node()
@@ -36,32 +36,37 @@ class ConcurrentLinkedList
         }
         /**
         * run do a round trip to sum nodes. 
-        * Wait call from previous_ (except for head), then send to its next_ node until end().
-        * Wait call from next_ (except for tail), then update sum_ and send to its previous_ node until begin().
+        * Wait call from previous_ , then send to its next_ node until end.
+        * Wait call from next_ (except for tail), then update sum_ and send to its previous_ node until begin.
         */
-        void run(Channel<int> *channel)
+        void run(Node *begin, Node *sentinal)
         {
-            channel_ = channel;
             int r;
-            // receive from previous_
-            *channel_ >> r;
-            sum_ = element_ + r;
-            std::cout << "received channel " << r << std::endl;
-            // send next_
-            next_->send(sum_);
-            // receive from next_
-            *channel_ >> r;
-            sum_ = r;
-            // send previous_
-            previous_->send(sum_);
+            // receive from previous_ and send next_
+            channel_ >> r;
+            if (this->next_ == sentinal)
+            { // tail
+                sum_ = element_ + r;
+                previous_->send(sum_);
+            }
+            else
+            {
+                next_->send(element_ + r);
+                // receive from next_ and send previous_
+                channel_ >> r;
+                sum_ = r;
+                if (this != begin)
+                {
+                    previous_->send(sum_);
+                }
+            }
         }
         /**
         * send put given input into channel_
         */
         void send(int element)
         {
-            *channel_ << element;
-            std::cout << "send channel " << element << std::endl;
+            channel_ << element;
         }
     };
 
@@ -230,23 +235,15 @@ class ConcurrentLinkedList
     /**
     * Sum of all threaded nodes.
     */
-    int
-    sum()
+    int sum()
     {
-        Channel<int> *head_chan;
         std::vector<std::thread> workers;
         for (auto i = begin(); i != end(); ++i)
         {
-            Channel<int> *channel = new Channel<int>(0);
-            // ref to head channel
-            if (i == begin())
-            {
-                head_chan = channel;
-            }
-            workers.emplace_back(&Node::run, i.node_, channel);
+            workers.emplace_back(&Node::run, i.node_, begin().node_, end().node_);
         }
         // start head
-        *head_chan << 0;
+        begin().node_->channel_ << 0;
         for (auto &t : workers)
         {
             t.join();

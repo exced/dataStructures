@@ -20,6 +20,7 @@ int main(int argc, const char * argv[]) {
     list.add(4);
     list.add(2);
     list.add(3);
+    list.add(1);
     int s = list.sum();
     std::cout << "multi threaded sum: " << s << std::endl;
     std::cout << "list: " << list << std::endl;

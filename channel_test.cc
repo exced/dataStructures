@@ -50,8 +50,8 @@ void world()
 
 int main(int argc, const char *argv[])
 {
-    std::thread t1(hello);
     std::thread t2(world);
+    std::thread t1(hello);
 
     t1.join();
     t2.join();
